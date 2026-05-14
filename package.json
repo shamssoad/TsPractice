@@ -1,5 +1,5 @@
 {
-  "name": "taskflow",
+  "name": "taskflow-shams",
   "version": "1.0.3",
   "description": "A super simple job queue implementation in TypeScript.",
   "license": "ISC",
