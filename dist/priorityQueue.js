@@ -85,36 +85,11 @@ class PriorityQueues {
         return job;
     }
     async executeNext() {
-        const job = this.dequeue();
-        if (!job) {
-            return null;
-        }
-        while (job.retryCount && job.retryCount > 0) {
-            try {
-                const res = await job.func();
-                console.log(`Executed job ${job.id} with priority ${job.priority}`);
-                if (!res.success) {
-                    throw new Error("Job execution failed");
-                }
-                else {
-                    break;
-                }
-            }
-            catch (error) {
-                job.retryCount--;
-                if (job.retryCount > 0) {
-                    console.warn(`Job ${job.id} failed, retrying...`);
-                }
-                else {
-                    console.error(`Job ${job.id} failed:`, error);
-                }
-            }
-        }
-        return job;
+        return this.dequeue();
     }
     async executeAll() {
         while (!this.isEmpty()) {
-            await this.executeNext();
+            this.dequeue();
         }
     }
 }

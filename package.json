@@ -1,6 +1,6 @@
 {
   "name": "taskflow-shams",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A super simple job queue implementation in TypeScript.",
   "license": "ISC",
   "author": "",
@@ -15,7 +15,9 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@types/node": "^25.8.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.0",
     "typescript": "^6.0.3"
   }
 }

@@ -1,54 +1,35 @@
-import PriorityQueues from "./priorityQueue";
-import Job, { createJob, JobResponse } from "./types";
+﻿import { createJob } from "./types";
+import { enqueue } from "./manager";
+import { QueueSDK } from "./queueSdk";
 
-// const pq = new PriorityQueues();
+const apiKey = process.env.QUEUE_SDK_API_KEY ?? "qsdk_test_123456";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduYWhtbHN1cmNkaXBhYmV0b2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNjM2NTksImV4cCI6MjA5NDczOTY1OX0.Dt5CxXpMg826x9TCz8RF2mA-LPIo5GhCKGIv7iurid4";
 
-// pq.enqueue(
-//   createJob(1, 2, "Low priority job", async (): Promise<JobResponse> => {
-//     console.log("Executing low priority job");
-//     return { success: true};
-//   })
-// );
+if (!apiKey || !supabaseAnonKey) {
+  throw new Error(
+    "Missing environment variables. Set QUEUE_SDK_API_KEY and SUPABASE_ANON_KEY before running."
+  );
+}
 
-// pq.enqueue(createJob(6, 1, "Send analytics event", async (): Promise<JobResponse> => {
-//   const success = Math.random() > 0.3;
+async function main(): Promise<void> {
+  const sdk = new QueueSDK(apiKey, supabaseAnonKey);
+  await sdk.init();
 
-//   if (!success) {
-//     throw new Error("Network failed");
-//   }
-//   console.log("Analytics sent");
-//   return { success: true };
-// }));
+  console.log("Job Manager initialized. Enqueuing jobs...");
 
-// pq.enqueue(createJob(5, 2, "Calculate report statistics", async (): Promise<JobResponse> => {
-//   let sum = 0;
+  sdk.enqueueJob(1, 2, "Low priority job", "lowPriority");
+  sdk.enqueueJob(6, 1, "Send analytics event", "sendAnalytics");
+  sdk.enqueueJob(5, 2, "Calculate report statistics", "reportStatistics");
+  sdk.enqueueJob(3, 1, "Fetch user profile", "fetchUserProfile");
+  sdk.enqueueJob(4, 3, "Cleanup temp files", "cleanupTempFiles");
 
-//   for (let i = 0; i < 1e7; i++) {
-//     sum += i;
-//   }
+  console.log("Jobs enqueued. Waiting for execution...");
+}
 
-//   console.log("Report ready:", sum);
-//   return { success: true };
-// }));
-
-// pq.enqueue(createJob(3, 1, "Fetch user profile", async (): Promise<JobResponse> => {
-//   const res = await fetch("https://opsjfsief.typicode.com/todos/1*jjj");
-//   const data = await res.json();
-//   console.log("User profile loaded", data);
-//   return { success: true };
-// }));
-
-// pq.enqueue(createJob(4, 3, "Cleanup temp files", async (): Promise<JobResponse> => {
-//   console.log("Cleaning temporary files...");
-//   return { success: true };
-// }));
-
-// (async () => {
-//   console.log("Starting job execution by dequeuing jobs...");
-//   await pq.executeAll();
-//   console.log("All jobs finished");
-// })();
-
+main().catch((error) => {
+  console.error("Failed to initialize SDK or enqueue jobs:", error);
+  process.exit(1);
+});
 
 export * from "./types";
-export { default, default as PriorityQueues } from "./priorityQueue";
+export { default, default as JobQueue } from "./priorityQueue";
