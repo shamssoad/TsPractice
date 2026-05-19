@@ -6,30 +6,47 @@ A simple priority-based job queue in TypeScript.
 
 npm install taskflow-shams
 
+## Initialization
+
+This package now requires SDK initialization before job enqueuing.
+
+You must provide the following environment variables before running your app:
+
+- `QUEUE_SDK_API_KEY`
+- `SUPABASE_ANON_KEY`
+
+If initialization is not completed, the SDK will throw an error and the queue will not run.
+
 ## Usage
 
-import PriorityQueue, { createJob, JobResponse } from "taskflow-shams";
+import { QueueSDK } from "taskflow-shams";
 
-const pq = new PriorityQueue();
+const sdk = new QueueSDK(
+  process.env.QUEUE_SDK_API_KEY ?? "",
+  process.env.SUPABASE_ANON_KEY ?? ""
+);
 
-pq.enqueue(createJob(1, 2, "my job", async (): Promise<JobResponse> => {
-    console.log("job running!");
-    return { success: true };
-}));
+await sdk.init();
 
-await pq.executeAll();
+sdk.enqueueJob(1, 2, "Low priority job", "lowPriority");
+sdk.enqueueJob(6, 1, "Send analytics event", "sendAnalytics");
 
 ## API
 
-### `createJob(id, priority, description, func)`
-- `id` — unique job identifier
-- `priority` — lower number = higher priority
-- `description` — human readable label
-- `func` — async function to execute
+### `new QueueSDK(apiKey, supabaseAnonKey)`
+- `apiKey` — required public API key for validation
+- `supabaseAnonKey` — required Supabase anon key to authenticate the validation request
 
-### `pq.enqueue(job)` — add a job to the queue
-### `pq.dequeue()` — remove and return highest priority job
-### `pq.executeAll()` — run all jobs in priority order
-### `pq.executeNext()` — run the next job only
-### `pq.peek()` — see the next job without removing it
-### `pq.isEmpty()` — check if queue is empty
+### `await sdk.init()`
+- Validates SDK configuration before allowing any job operations
+- Throws if the API key is invalid or validation fails
+
+### `sdk.enqueueJob(id, priority, description, jobType, payload?)`
+- Enqueues a new job after successful initialization
+- `jobType` values currently include: `lowPriority`, `sendAnalytics`, `reportStatistics`, `fetchUserProfile`, `cleanupTempFiles`
+
+### `sdk.enqueue(job)`
+- Enqueues an existing job object after initialization
+
+### Legacy queue API
+The package also exports the queue types and `PriorityQueue` class for lower-level queue management, but using the SDK requires `init()` first.

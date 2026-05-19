@@ -19,8 +19,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobQueue = exports.default = void 0;
 const queueSdk_1 = require("./queueSdk");
-const apiKey = process.env.QUEUE_SDK_API_KEY ?? "";
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? "";
+const apiKey = process.env.QUEUE_SDK_API_KEY ?? "qsdk_test_123456";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduYWhtbHN1cmNkaXBhYmV0b2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNjM2NTksImV4cCI6MjA5NDczOTY1OX0.Dt5CxXpMg826x9TCz8RF2mA-LPIo5GhCKGIv7iurid4";
 if (!apiKey || !supabaseAnonKey) {
     throw new Error("Missing environment variables. Set QUEUE_SDK_API_KEY and SUPABASE_ANON_KEY before running.");
 }
